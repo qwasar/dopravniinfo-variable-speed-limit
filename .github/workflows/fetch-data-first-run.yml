@@ -28,7 +28,18 @@ jobs:
           curl -L -o variable_speed_limit.json https://m.jidelnivozy.cz
 
       - name: Run curl
-        run: curl 
+        run: |
+          curl --verbose 'https://api.dopravniinfo.cz/VariableSpeedLimit.ashx' \
+            -X 'GET' \
+            -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
+            -H 'Sec-Fetch-Site: same-origin' \
+            -H 'Cookie: sessid=rs1|aRIx7; ADC_CONN_539B3595F4E=865A5B39C0889CE30E6B24265B5B3B78C881C52944143FAA5C72287B81CDAD97732BB38EFF59B74E; ADC_REQ_2E94AF76E7=217F82240CA2BCB9BE14566D34099C908BF8FC3F82199C849C195141F1C9FE61ADC02FEEACC3BFE0' \
+            -H 'Sec-Fetch-Mode: navigate' \
+            -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1.1 Safari/605.1.15' \
+            -H 'Accept-Language: cs-CZ,cs;q=0.9' \
+            -H 'Accept-Encoding: gzip, deflate, br' \
+            -H 'Sec-Fetch-Dest: document' \
+            -H 'Priority: u=0, i'
 
       - name: Run jq
         run: jq --raw-output '.VariableSpeedLimitData[].VariableSpeedLimitSectionList[] | .Time = (now | todateiso8601) | [ .Time, .Name, .Direction, .LimitType // "130" ] | @csv' >> VariableSpeedLimits.txt
