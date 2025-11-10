@@ -24,7 +24,7 @@ jobs:
         run: echo Fetch started
         
       - name: Run curl
-        run: curl https://api.dopravniinfo.cz/VariableSpeedLimit.ashx
+        run: curl
 
       - name: Run jq
         run: jq --raw-output '.VariableSpeedLimitData[].VariableSpeedLimitSectionList[] | .Time = (now | todateiso8601) | [ .Time, .Name, .Direction, .LimitType // "130" ] | @csv' >> VariableSpeedLimits.txt
