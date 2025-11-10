@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Fetch data from VariableSpeedLimit endpoint
+name: First run: fetch data from VariableSpeedLimit endpoint
 
 # Controls when the workflow will run
 on:
@@ -16,11 +16,11 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   fetch-data:
-    name: Fetch data
+    name: Fetch data first run
     runs-on: ubuntu-latest
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      #- uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       #- name: Download previous artifact data
       #  uses: actions/download-artifact@v5
@@ -30,7 +30,9 @@ jobs:
           
       - name: Fetch data from endpoint
         run: |
-          curl -s https://api.dopravniinfo.cz/VariableSpeedLimit.ashx | jq --raw-output '.VariableSpeedLimitData[].VariableSpeedLimitSectionList[] | .Time = (now | todateiso8601) | [ .Time, .Name, .Direction, .LimitType // "130" ] | @csv' >> VariableSpeedLimits.txt
+          echo Fetch started
+          curl -s -o VariableSpeedLimit.ashx.json https://api.dopravniinfo.cz/VariableSpeedLimit.ashx
+          jq --raw-output '.VariableSpeedLimitData[].VariableSpeedLimitSectionList[] | .Time = (now | todateiso8601) | [ .Time, .Name, .Direction, .LimitType // "130" ] | @csv'  VariableSpeedLimit.ashx.json >> VariableSpeedLimits.txt
           echo Fetch succeeded
           
       - name: Upload fresh artifact data
