@@ -28,13 +28,18 @@ jobs:
       #    name: variable-speed-limits
       #    path: VariableSpeedLimits.txt
           
-      - name: Fetch data from endpoint
-        run: |
-          echo Fetch started
-          curl -s -o VariableSpeedLimit.ashx.json https://api.dopravniinfo.cz/VariableSpeedLimit.ashx
-          jq --raw-output '.VariableSpeedLimitData[].VariableSpeedLimitSectionList[] | .Time = (now | todateiso8601) | [ .Time, .Name, .Direction, .LimitType // "130" ] | @csv'  VariableSpeedLimit.ashx.json >> VariableSpeedLimits.txt
-          echo Fetch succeeded
+      - name: Start
+        run: echo Fetch started
+        
+      - name: Run curl
+        run: curl -o VariableSpeedLimit.ashx.json https://api.dopravniinfo.cz/VariableSpeedLimit.ashx
+
+      - name: Run jq
+        run: jq --raw-output '.VariableSpeedLimitData[].VariableSpeedLimitSectionList[] | .Time = (now | todateiso8601) | [ .Time, .Name, .Direction, .LimitType // "130" ] | @csv'  VariableSpeedLimit.ashx.json >> VariableSpeedLimits.txt
           
+      - name: Fetch succeeded
+        run: echo Fetch succeeded
+        
       - name: Upload fresh artifact data
         uses: actions/upload-artifact@v4
         with:
